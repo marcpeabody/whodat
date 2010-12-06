@@ -1,0 +1,49 @@
+#!/usr/bin/env ruby
+
+# ruby whothehell.rb wordtofind
+# Find the REAL person to blame for bad code.
+# All you need to know is a unique word in the violating code,
+# such as the method name, and supply it as an argument
+begin
+  git_found = require 'git'
+rescue LoadError
+  puts "please [sudo] gem install git"
+  exit
+end
+
+if ARGV.empty?
+  print "enter a word to search for:"
+  word = gets.chomp
+else
+  word = ARGV.first
+end
+
+while(!File.exist?(Dir.pwd + "/.git"))
+  break if Dir.pwd == "/"
+  Dir.chdir("../");
+end
+
+g = Git.open(Dir.pwd)
+c = g.gcommit 'master'
+authors = []
+original_commit = nil
+while(true)
+  x = c
+  c = c.parent
+  break if c.nil?
+  diff = g.diff(x, c).to_s
+  if diff.include? word
+    authors << x.author.name
+    original_commit = x.sha
+  end
+end
+
+authors = authors.reverse.uniq
+if authors.empty?
+  puts "Word '#{word}' not found."
+else
+  puts "BLAME: #{authors.first} #{original_commit}"
+  if authors.size > 1
+    puts "These folks didn't fix it:\n\t#{authors[1..-1].join("\n\t")}"
+  end
+end
