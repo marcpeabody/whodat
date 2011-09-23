@@ -1,8 +1,19 @@
 #!/usr/bin/env ruby
 
-# ruby whothehell.rb wordtofind
-# Find the REAL person to blame for bad code.
-# All you need to know is a unique word in the violating code,
+# How to Use: whodat wordtofind
+# Assumes your project is using Git.
+# Here's me using whodat against the RubyKoans project:
+#
+# ruby_koans (mp: master) ~ whodat AboutString
+# BLAME: Joe O'Brien 4e78262965cd05f917464b36ad7bcecc8836cfb4
+# These folks didn't fix it:
+#   Jim Weirich
+#
+# Now I know who originally
+# authored the AboutString Ruby Koan. It was Joe!!!
+#
+# Find the REAL person to blame for code.
+# All you need to know is a unique word
 # such as the method name, and supply it as an argument
 begin
   git_found = require 'git'
